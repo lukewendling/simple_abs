@@ -1,7 +1,7 @@
-class CreateAlternativesTable < ActiveRecord::Migration
+class CreateExperiments < ActiveRecord::Migration
   def self.up
-    create_table :alternatives, :force => true do |t|
-      t.string   "which"
+    create_table :experiments, :force => true do |t|
+      t.string   "name"
       t.integer  "participants", :default => 0
       t.integer  "conversions",  :default => 0
       t.text     "experiment"
@@ -9,11 +9,11 @@ class CreateAlternativesTable < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :alternatives, :which
+    add_index :experiments, :name
 
   end
 
   def self.down
-    drop_table :alternatives
+    drop_table :experiments
   end
 end

@@ -4,13 +4,8 @@ module SimpleAbs
 
   def is_bot?
     agent = request.env["HTTP_USER_AGENT"]
-    matches = nil
-    matches = agent.match(/(facebook|postrank|voyager|twitterbot|googlebot|slurp|butterfly|pycurl|tweetmemebot|metauri|evrinid|reddit|digg)/mi) if agent
-    if (agent.nil? or matches)
-      return true
-    else
-      return false
-    end
+    matches = agent.match(/(facebook|bingbot|baidu|twitterbot|googlebot|slurp|butterfly|reddit|digg)/mi) if agent
+    agent.nil? or matches
   end
   
   def ab_test(name, tests)
@@ -30,7 +25,7 @@ module SimpleAbs
       test_value = tests[rand(tests.size)]
       cookies.permanent[name] = test_value
       
-      Alternative.find_or_create_by_experiment_and_which(name, test_value).increment!(:participants)
+      Experiment.find_or_create_by_experiment_and_name(name, test_value).increment!(:participants)
     end
     
     return test_value
@@ -41,7 +36,7 @@ module SimpleAbs
     if !is_bot?
       test_value = cookies[name]
       if test_value && cookies[name.to_s + "_converted"].blank?
-        Alternative.find_or_create_by_experiment_and_which(name, test_value).increment!(:conversions)
+        Experiment.find_or_create_by_experiment_and_name(name, test_value).increment!(:conversions)
         cookies.permanent[name.to_s + "_converted"] = true
       end
     end
@@ -55,7 +50,7 @@ module SimpleAbs
     end
   end
 
-  class Alternative < ActiveRecord::Base
+  class Experiment < ActiveRecord::Base
 
   end
 
